@@ -1,9 +1,11 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const gravatar = require('gravatar')
+const jwt = require('jsonwebtoken')
 const router = express.Router()
+const keys = require('../../config/key')
 //引入user表
-const User = require('../../models/User');
+const User = require('../../models/User')
 
 const tool = require('../../tool/index')
 // $route get api/users/test
@@ -35,7 +37,9 @@ router.post('/register', (req, res) => {
   if (!tool.validate(req.body.email, 'email')) {
     return res.status(402).json({ msg: '邮箱格式不正确' })
   }
-
+  if (!tool.validate(req.body.password, 'require')) {
+    return res.status(403).json({ msg: '密码格式不正确' })
+  }
   // 查询数据库中是否拥有邮箱
   User.findOne({ email: req.body.email }).then(user => {
 
@@ -75,6 +79,52 @@ router.post('/register', (req, res) => {
 
 })
 
+/**
+ * 登录功能
+ * 
+ * 
+ */
+router.post('/login', (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
+  if (!tool.validate(password, 'require')) {
+    return res.status(403).json({ msg: '密码格式不正确!' });
+  }
+  if (!tool.validate(email, 'email')) {
+    return res.status(402).json({ msg: '邮箱格式不正确' })
+  }
+  //查询数据库
+
+  User.findOne({ email }).then((user) => {
+    if (!user) {
+      return res.status(404).json('用户不存在')
+    }
+
+    // 存在，进行密码匹配
+
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        const rule = {
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar,
+          identity: user.identity
+        }
+        jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+          if (err) throw err
+          res.json({
+            success: true,
+            token: 'jia' + token
+          })
+        })
+      } else {
+        return res.status(405).json('密码错误')
+      }
+    })
+  })
+
+
+})
 
 
 

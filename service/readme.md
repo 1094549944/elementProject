@@ -18,3 +18,9 @@ npm install bcrypt --save
 
 # 对头像进行处理
 npm install gravatar --save
+
+# token 处理，使用jwt
+
+npm install jsonwebtoken --save
+
+
