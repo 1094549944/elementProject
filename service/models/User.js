@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
  * 邮箱：email
  * 密码：password
  * 头像：avatar
- * 身份证：identity
+ * 身份证：identity 管理员 员工
  * 创建时间：date
  * 
  * 

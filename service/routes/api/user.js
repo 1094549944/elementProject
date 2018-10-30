@@ -22,7 +22,7 @@ router.get('/test', (req, res) => {
 })
 
 
-// $route get api/users/register
+// $route post api/users/register
 /**
  * 注册
  * @desc 返回的请求的json数据
@@ -40,10 +40,13 @@ router.post('/register', (req, res) => {
   if (!tool.validate(req.body.password, 'require')) {
     return res.status(403).json({ msg: '密码格式不正确' })
   }
+  if (!tool.validate(req.body.identity, 'require')) {
+    return res.status(406).json({ msg: '登录身份不正确' })
+  }
   // 查询数据库中是否拥有邮箱
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      return res.status(400).json({ email: '邮箱已被注册!' });
+      return res.status(407).json({ email: '邮箱已被注册!' });
     } else {
       // 没有被注册，那就注册
       const avatar = gravatar.url(req.body.email, {
@@ -84,11 +87,15 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   const email = req.body.email
   const password = req.body.password
+  const identity = req.body.identity
   if (!tool.validate(password, 'require')) {
     return res.status(403).json({ msg: '密码格式不正确!' });
   }
   if (!tool.validate(email, 'email')) {
     return res.status(402).json({ msg: '邮箱格式不正确' })
+  }
+  if (!tool.validate(identity, 'require')) {
+    return res.status(406).json({ msg: '登录身份不正确' })
   }
   //查询数据库
   User.findOne({ email }).then((user) => {
