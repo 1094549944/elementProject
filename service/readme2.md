@@ -67,3 +67,19 @@ params:{
   id
 }
 
+# 编辑单个信息
+
+ ### POST
+ ###  api/profiles/edit
+ params:{
+   id
+ }
+ 
+# 删除单个信息
+
+###  POST 
+###  api/profiles/delete/:id
+
+ params:{
+   id
+ }
