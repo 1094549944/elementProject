@@ -20,7 +20,8 @@ npm install bcrypt --save
 npm install gravatar --save
 
 # token 处理，使用jwt
-
 npm install jsonwebtoken --save
 
 
+# 验证token  使用passport passport-jwt
+npm install passport passport-jwt --save

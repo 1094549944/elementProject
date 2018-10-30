@@ -1,16 +1,13 @@
 const express = require('express')
 const mongoose = require('mongoose')
-
-const app = new express()
+const passport = require('passport')
 const bodyParser = require('body-parser')
 const users = require('./routes/api/user.js')
+const app = new express()
 
-//使用bodyparser  urlencoded 为了解决post的一个问题
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//引入业务逻辑
-
 
 //connet db
 
@@ -20,13 +17,15 @@ mongoose.connect(db).then(() => {
 }).catch(() => {
   console.log('链接失败')
 })
+//passport 初始化
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 app.get('/', (req, res) => {
   res.end('hello word')
 })
 
 //使用routes
-
 app.use('/api/users', users)
 
 
