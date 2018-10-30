@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const passport = require('passport')
 const bodyParser = require('body-parser')
 const users = require('./routes/api/user.js')
+const profiles = require('./routes/api/profiles')
 const app = new express()
 
 // 使用body-parser中间件
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 
 //使用routes
 app.use('/api/users', users)
+app.use('/api/profiles', profiles)
 
 
 const port = process.env.PORT || 5000

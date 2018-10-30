@@ -85,9 +85,9 @@ router.post('/register', (req, res) => {
  * 
  */
 router.post('/login', (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
-  const identity = req.body.identity
+  const email = req.body.email || ''
+  const password = req.body.password || ''
+  const identity = req.body.identity || ''
   if (!tool.validate(password, 'require')) {
     return res.status(403).json({ msg: '密码格式不正确!' });
   }

@@ -36,4 +36,34 @@ params:{
 
 }
 
+# 业务类
+
+## 创建信息接口
+
+### POST 
+### api/profiles/add
+
+params:{
+  type
+  describe
+  income
+  expend
+  cash
+  remark
+}
+## 查询信息
+
+### GET 
+### api/profiles
+params:{
+
+}
+
+
+# 获取单个信息
+### GET 
+### api/profiles/:id
+params:{
+  id
+}
 
