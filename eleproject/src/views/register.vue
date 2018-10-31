@@ -113,10 +113,30 @@ export default {
   },
   methods: {
     submitForm (formName) {
-      console.log(formName)
+
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log('通过验证')
+          this.$axios
+            .post("/api/users/register", this.registerUser)
+            .then(res => {
+              if (res.code == '0') {
+                // 注册成功
+                this.$message({
+                  message: res.data.msg,
+                  type: "success"
+                });
+                return
+              } else {
+                this.$message({
+                  message: res.data.msg,
+                  type: "error"
+                });
+              }
+
+
+            }).catch(err => {
+              console.log(err)
+            })
         } else {
           console.log('没有通过验证')
           return

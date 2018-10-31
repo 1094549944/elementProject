@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'init'
+  name: 'test'
 }
 </script>
 
