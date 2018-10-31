@@ -6,6 +6,7 @@ const users = require('./routes/api/user.js')
 const profiles = require('./routes/api/profiles')
 const app = new express()
 
+
 // 使用body-parser中间件
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

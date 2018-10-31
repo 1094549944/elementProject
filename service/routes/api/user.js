@@ -30,23 +30,25 @@ router.get('/test', (req, res) => {
  * 
  */
 router.post('/register', (req, res) => {
+  console.log('添加新用户')
   //加一层判断
   if (!tool.validate(req.body.name, 'require')) {
-    return res.status(401).json({ msg: '用户不能为空!' });
+    return res.status(401).json({ code: 401, msg: '用户不能为空!' });
   }
   if (!tool.validate(req.body.email, 'email')) {
-    return res.status(402).json({ msg: '邮箱格式不正确' })
+    return res.status(200).json({ code: 402, msg: '邮箱格式不正确' })
   }
   if (!tool.validate(req.body.password, 'require')) {
-    return res.status(403).json({ msg: '密码格式不正确' })
+    return res.status(200).json({ code: 403, msg: '密码格式不正确' })
   }
   if (!tool.validate(req.body.identity, 'require')) {
-    return res.status(406).json({ msg: '登录身份不正确' })
+    return res.status(200).json({ code: 406, msg: '登录身份不正确' })
   }
   // 查询数据库中是否拥有邮箱
   User.findOne({ email: req.body.email }).then(user => {
+
     if (user) {
-      return res.status(407).json({ email: '邮箱已被注册!' });
+      return res.status(200).json({ code: 408, msg: '邮箱已被注册!' });
     } else {
       // 没有被注册，那就注册
       const avatar = gravatar.url(req.body.email, {
@@ -70,7 +72,13 @@ router.post('/register', (req, res) => {
           //存储数据
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(user => res.json({
+              code: 0,
+              msg: '注册成功',
+              data: {
+                user
+              }
+            }))
             .catch(err => console.log(err));
         });
       });
@@ -89,13 +97,13 @@ router.post('/login', (req, res) => {
   const password = req.body.password || ''
   const identity = req.body.identity || ''
   if (!tool.validate(password, 'require')) {
-    return res.status(403).json({ msg: '密码格式不正确!' });
+    return res.status(200).json({ code: 403, msg: '密码格式不正确!' });
   }
   if (!tool.validate(email, 'email')) {
-    return res.status(402).json({ msg: '邮箱格式不正确' })
+    return res.status(200).json({ code: 402, msg: '邮箱格式不正确' })
   }
   if (!tool.validate(identity, 'require')) {
-    return res.status(406).json({ msg: '登录身份不正确' })
+    return res.status(200).json({ code: 406, msg: '登录身份不正确' })
   }
   //查询数据库
   User.findOne({ email }).then((user) => {
@@ -115,13 +123,15 @@ router.post('/login', (req, res) => {
         jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
           if (err) throw err
           res.json({
-            success: true,
-            token: 'Bearer ' + token,
+            code: 0,
+            data: {
+              token: 'Bearer ' + token,
+            },
             msg: '成功生成token'
           })
         })
       } else {
-        return res.status(405).json('密码错误')
+        return res.status(200).json({ code: 405, msg: '密码错误' })
       }
     })
   })
@@ -141,10 +151,14 @@ router.post('/login', (req, res) => {
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
 
   res.status(200).json({
-    id: req.user.id,
-    name: req.user.name,
-    email: req.user.email,
-    identity: req.user.identity
+    code: 0,
+    status: 200,
+    data: {
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      identity: req.user.identity
+    }
   });
 })
 

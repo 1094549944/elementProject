@@ -7,3 +7,5 @@
 2.构建前端页面：VueCli3.0+Element-ui
 3.数据请求及拦截：Axios+Mlab+MongoDB
 4.分页和筛选
+
+### 涉及到jwt ,token验证 element-ui 使用
