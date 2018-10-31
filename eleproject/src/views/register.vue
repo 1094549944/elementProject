@@ -2,10 +2,10 @@
   <div class="register">
     <section class="form_container">
       <div class="manage_tip">
-        <span class="title">在线后台管理系统</span>
+        <span class="title">在线后台管理系统自娱自乐</span>
       </div>
-
-      <el-form :model="registerUser"
+      <el-form status-icon
+               :model="registerUser"
                :rules="rules"
                class="registerForm"
                ref="registerForm"
@@ -32,13 +32,14 @@
                     placeholder="请确认密码"
                     type="password"></el-input>
         </el-form-item>
-        <el-form-item label="选择身份">
+        <el-form-item label="选择身份"
+                      prop="identity">
           <el-select v-model="registerUser.identity"
                      placeholder="请选择身份">
-            <el-option label="管理员"
-                       value="manager"></el-option>
-            <el-option label="员工"
-                       value="employee"></el-option>
+            <el-option v-for="(item,index ) in identityList"
+                       :key="index"
+                       :label="item.name"
+                       :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -63,6 +64,13 @@ export default {
       }
     }
     return {
+      identityList: [{
+        name: '管理员',
+        value: 'manager'
+      }, {
+        name: '员工',
+        value: 'employee'
+      }],
       registerUser: {
         name: '',
         email: '',
@@ -83,6 +91,9 @@ export default {
             trigger: "blur"
           }
         ],
+        identity: [
+          { required: true, message: '请选择登录身份', trigger: 'change' }
+        ],
         password: [
           { required: true, message: "密码不能为空", trigger: "blur" },
           { min: 6, max: 30, message: "长度在 6 到 30 个字符", trigger: "blur" }
@@ -102,44 +113,54 @@ export default {
   },
   methods: {
     submitForm (formName) {
+      console.log(formName)
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          console.log('通过验证')
+        } else {
+          console.log('没有通过验证')
+          return
+        }
+      })
     }
   }
 }
 </script>
 
-<style scoped>
-.register {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: url('../assets/bg.jpg') no-repeat center center;
-  background-size: 100% 100%;
-}
-.form_container {
-  width: 370px;
-  height: 210px;
-  position: absolute;
-  top: 10%;
-  left: 34%;
-  padding: 25px;
-  border-radius: 5px;
-  text-align: center;
-}
-.form_container .manage_tip .title {
-  font-family: 'Microsoft YaHei';
-  font-weight: bold;
-  font-size: 26px;
-  color: #fff;
-}
-.registerForm {
-  margin-top: 20px;
-  background-color: #fff;
-  padding: 20px 40px 20px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px #cccc;
-}
+<style scoped lang="stylus">
+.register
+  position relative
+  width 100%
+  height 100%
+  background url('../assets/bg.jpg') no-repeat center center
+  background-size 100% 100%
 
-.submit_btn {
-  width: 100%;
-}
+.form_container
+  width 370px
+  height 210px
+  position absolute
+  top 10%
+  left 34%
+  padding 25px
+  border-radius 5px
+  text-align center
+
+.form_container .manage_tip .title
+  font-family 'Microsoft YaHei'
+  font-weight bold
+  font-size 26px
+  color #fff
+
+.registerForm
+  margin-top 20px
+  background-color #fff
+  padding 20px 40px 20px 20px
+  border-radius 5px
+  box-shadow 0px 5px 10px #cccc
+
+.submit_btn
+  width 100%
+
+.el-select
+  width 100%
 </style>
