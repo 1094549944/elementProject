@@ -14,7 +14,11 @@ const Login = () => import( /* webpackChunkName: "login" */ '@/views/login')
 */
 const Error404 = () => import( /* webpackChunkName: "404Error" */ '@/views/404')
 
+const Index = () =>
+  import( /* webpackChunkName: "index" */ '@/views/index')
 
+const InfoShow = () =>
+  import( /* webpackChunkName: "infoShow" */ '@/views/infoShow')
 const router = [{
   path: '/test',
   name: Test,
@@ -27,6 +31,14 @@ const router = [{
   path: '/login',
   name: Login,
   component: Login
+}, {
+  path: '/index',
+  name: Index,
+  component: Index
+}, {
+  path: '/infoshow',
+  name: InfoShow,
+  component: InfoShow
 }, {
   path: '*',
   name: Error404,

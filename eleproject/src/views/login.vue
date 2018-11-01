@@ -86,7 +86,7 @@ export default {
             this.$store.dispatch("setUser", decode);
 
             // 页面跳转
-            this.$router.push("/test");
+            this.$router.push("/index");
             this.$message({
               message: res.data.msg,
               type: "success"
