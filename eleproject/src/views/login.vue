@@ -35,7 +35,7 @@
 </template>
 
 <script>
-//import jwt_decode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 
 export default {
   name: "login",
@@ -66,7 +66,8 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$axios.post("/api/users/login", this.loginUser).then(res => {
-            if (res.code != 0) {
+            // console.log(res.data)
+            if (res.data.code != 0) {
               this.$message({
                 message: res.data.msg,
                 type: "error"
@@ -74,7 +75,7 @@ export default {
               return
             }
             // 登录成功
-            const { token } = res.data;
+            const { token } = res.data.data;
             localStorage.setItem("eleToken", token);
 
             // 解析token
@@ -85,7 +86,11 @@ export default {
             this.$store.dispatch("setUser", decode);
 
             // 页面跳转
-            this.$router.push("/index");
+            this.$router.push("/test");
+            this.$message({
+              message: res.data.msg,
+              type: "success"
+            });
           });
         } else {
           console.log("error submit!!");

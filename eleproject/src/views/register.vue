@@ -124,7 +124,8 @@ export default {
                 this.$message({
                   message: res.data.msg,
                   type: "success"
-                });
+                })
+                this.$router.push("/login")
                 return
               } else {
                 this.$message({

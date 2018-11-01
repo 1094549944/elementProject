@@ -19,7 +19,10 @@ function endLoading () {    //使用Element loading-close 方法
 axios.interceptors.request.use(config => {
   // 加载
   startLoading()
-
+  //判断是否登录了，如果登录了，那么设置请求头。
+  if (localStorage.eleToken)
+    config.headers.Authorization = localStorage.eleToken
+  return config
 
   return config
 }, error => {
@@ -37,6 +40,16 @@ axios.interceptors.response.use(response => {
   Message.error(error.response.data)
 
   const { status } = error.response
+
+  // 判断是否失效了，如果token 过期，那么就要重新登录了
+  if (status == 401) {
+    Message.error('token值无效，请重新登录')
+    // 清除token
+    localStorage.removeItem('eleToken')
+
+    // 页面跳转
+    router.push('/login')
+  }
   return Promise.reject(error)
 })
 

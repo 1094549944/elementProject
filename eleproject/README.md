@@ -24,3 +24,6 @@ npm run test
 ```
 npm run lint
 ```
+
+### 解析token 
+jwt-decode

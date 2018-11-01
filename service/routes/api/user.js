@@ -102,9 +102,9 @@ router.post('/login', (req, res) => {
   if (!tool.validate(email, 'email')) {
     return res.status(200).json({ code: 402, msg: '邮箱格式不正确' })
   }
-  if (!tool.validate(identity, 'require')) {
-    return res.status(200).json({ code: 406, msg: '登录身份不正确' })
-  }
+  // if (!tool.validate(identity, 'require')) {
+  //   return res.status(200).json({ code: 406, msg: '登录身份不正确' })
+  // }
   //查询数据库
   User.findOne({ email }).then((user) => {
     if (!user) {
