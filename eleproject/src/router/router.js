@@ -19,6 +19,8 @@ const Index = () =>
 
 const InfoShow = () =>
   import( /* webpackChunkName: "infoShow" */ '@/views/infoShow')
+const Home = () => import( /* webpackChunkName: "home" */ '@/views/home')
+const FoundList = () => import( /* webpackChunkName: "foundList" */ '@/views/foundList')
 const router = [{
   path: '/test',
   name: Test,
@@ -31,14 +33,27 @@ const router = [{
   path: '/login',
   name: Login,
   component: Login
-}, {
+},
+{
   path: '/index',
   name: Index,
-  component: Index
-}, {
-  path: '/infoshow',
-  name: InfoShow,
-  component: InfoShow
+  component: Index,
+  children: [{
+    path: '',
+    component: Home
+  }, {
+    path: '/infoshow',
+    name: InfoShow,
+    component: InfoShow
+  }, {
+    path: '/home',
+    name: 'home',
+    component: Home
+  }, {
+    path: '/foundList',
+    name: 'foundList',
+    component: FoundList
+  }]
 }, {
   path: '*',
   name: Error404,

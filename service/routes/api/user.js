@@ -119,7 +119,7 @@ router.post('/login', (req, res) => {
           avatar: user.avatar,
           identity: user.identity
         }
-        //jwt 生成token 
+        //jwt 生成token  设置到期时间：expiresIn:3600
         jwt.sign(rule, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
           if (err) throw err
           res.json({
