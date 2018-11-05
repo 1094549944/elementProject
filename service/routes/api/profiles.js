@@ -1,8 +1,8 @@
 /*
  * @Author: jiaxinying 
  * @Date: 2018-10-30 15:46:54 
- * @Last Modified by:   jiaxinying 
- * @Last Modified time: 2018-10-30 15:46:54 
+ * @Last Modified by: jiaxinying
+ * @Last Modified time: 2018-11-05 14:07:43
  */
 
 const express = require('express');
@@ -36,7 +36,13 @@ router.post(
     if (req.body.remark) profileFields.remark = req.body.remark || '';
 
     new Profile(profileFields).save().then(profile => {
-      res.json(profile);
+      res.json({
+        code: 0,
+        msg: '添加成功',
+        data: {
+          profile
+        }
+      });
     });
   }
 );
@@ -101,7 +107,13 @@ router.post(
       { _id: req.params.id },
       { $set: profileFields },
       { new: true }
-    ).then(profile => res.json(profile));
+    ).then(profile => res.json({
+      code: 0,
+      msg: '修改成功',
+      data: {
+        profile
+      }
+    }));
   }
 );
 
@@ -114,7 +126,13 @@ router.delete(
   (req, res) => {
     Profile.findOneAndRemove({ _id: req.params.id })
       .then(profile => {
-        profile.save().then(profile => res.json(profile));
+        profile.save().then(profile => res.json({
+          code: 0,
+          msg: '删除成功',
+          data: {
+            profile
+          }
+        }));
       })
       .catch(err => res.status(404).json('删除失败!'));
   }
