@@ -6,7 +6,7 @@
                text-color="#fff"
                active-text-color="#409eff"
                class="el-menu-vertical-demo">
-        <router-link to="home">
+        <router-link :to="{name:'home'}">
           <el-menu-item index="0">
             <i class="fa fa-margin fa-server"></i>
             <span slot="title">首页</span>
@@ -21,7 +21,7 @@
               <span slot="title">{{item.name}}</span>
             </template>
             <router-link v-for="(citem,cindex) in item.children"
-                         :to="citem.path"
+                         :to="{name:citem.path}"
                          :key="cindex">
               <el-menu-item :index='citem.path'>
                 <span slot="title">{{citem.name}}</span>

@@ -26,6 +26,14 @@ const router = [{
   name: Test,
   component: Test,
 }, {
+  path: '',
+  name: Index,
+  component: Index,
+  children: [{
+    path: '/',
+    component: Home
+  }]
+}, {
   path: '/register',
   name: Register,
   component: Register
@@ -42,15 +50,15 @@ const router = [{
     path: '',
     component: Home
   }, {
-    path: '/infoshow',
-    name: InfoShow,
+    path: 'infoshow',
+    name: 'infoshow',
     component: InfoShow
   }, {
-    path: '/home',
+    path: 'home',
     name: 'home',
     component: Home
   }, {
-    path: '/foundList',
+    path: 'foundList',
     name: 'foundList',
     component: FoundList
   }]
