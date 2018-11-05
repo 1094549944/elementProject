@@ -119,7 +119,8 @@ export default {
           this.$axios
             .post("/api/users/register", this.registerUser)
             .then(res => {
-              if (res.code == '0') {
+              console.log(res)
+              if (res.data.code == '0') {
                 // 注册成功
                 this.$message({
                   message: res.data.msg,

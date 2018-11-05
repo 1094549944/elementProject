@@ -16,10 +16,11 @@ const state = { // 需要维护的状态
 const getters = {
   isAutnenticated: state => state.isAutnenticated,
   user: state => state.user
+
 }
 
+
 const mutations = {
-  //设置是否授权了
   [types.SET_IS_AUTNENTIATED] (state, isAutnenticated) {
     if (isAutnenticated)
       state.isAutnenticated = isAutnenticated
@@ -53,4 +54,3 @@ export default new Vuex.Store({
   mutations,
   actions
 })
-

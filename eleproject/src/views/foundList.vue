@@ -33,7 +33,8 @@
           <el-button type="primary"
                      size="small"
                      icon="view"
-                     @click='onAddMoney()'>添加</el-button>
+                     @click='onAddMoney()'
+                     v-if="qxFlag">添加</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -98,7 +99,8 @@
                          align='center'
                          width="220">
         </el-table-column>
-        <el-table-column prop="operation"
+        <el-table-column v-if="qxFlag"
+                         prop="operation"
                          align='center'
                          label="操作"
                          fixed="right"
@@ -165,6 +167,9 @@ export default {
   components: {
     DialogFound
   },
+  computed: {
+
+  },
   data () {
 
     /**
@@ -177,6 +182,7 @@ export default {
         "转账"
      */
     return {
+      qxFlag: false,
       options: [{
         value: '选项1',
         label: '提现'
@@ -227,9 +233,19 @@ export default {
     }
   },
   created () {
+    this.user()
     this.getProfile()
   },
   methods: {
+    user () {
+
+      if (this.$store.getters.user.identity == 'manager') {
+        this.qxFlag = true
+      } else {
+        this.qxFlag = false
+      }
+
+    },
     getProfile () {
       //获取表格数据 
       this.$axios("/api/profiles").then(res => {
