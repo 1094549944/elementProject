@@ -28,7 +28,6 @@
               </el-menu-item>
             </router-link>
           </el-submenu>
-
         </template>
       </el-menu>
     </el-col>

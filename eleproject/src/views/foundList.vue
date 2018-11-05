@@ -13,6 +13,15 @@
                           type="datetime"
                           placeholder="选择结束时间">
           </el-date-picker>
+          <span class="label">类型</span>
+          <el-select v-model="search_data.value"
+                     placeholder="请选择">
+            <el-option v-for="item in options"
+                       :key="item.label"
+                       :label="item.label"
+                       :value="item.label">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary"
@@ -108,7 +117,8 @@
       </el-table>
       <!-- 分页 -->
       <el-row>
-        <el-col :span="24">
+        <el-col :span="24"
+                v-if="tableData.length > 0">
           <div class="pagination">
             <el-pagination :page-sizes="paginations.page_sizes"
                            :page-size="paginations.page_size"
@@ -121,8 +131,25 @@
           </div>
         </el-col>
       </el-row>
+
     </div>
-    <!-- 弹框页面 -->
+
+    <div v-if="tableData.length <= 0"
+         class="none-data">
+      <el-row>
+        <el-col :span="24">
+          <div>
+            <img src="../assets/logo.png"
+                 alt="没有数据"
+                 srcset="">
+            <p>没有数据</p>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <!--
+          弹框页面
+          -->
     <DialogFound :dialog='dialog'
                  :form='form'
                  @update="getProfile"></DialogFound>
@@ -130,17 +157,46 @@
 </template>
 
 <script>
-import api from '../../src/services/api'
+
 import DialogFound from "../components/DialogFound"
 import tool from '../services/tool'
-// console.log(api)
 export default {
   name: 'foundList',
   components: {
     DialogFound
   },
   data () {
+
+    /**
+     * 
+     *  "提现",
+        "提现手续费",
+        "充值",
+        "优惠券",
+        "充值礼券",
+        "转账"
+     */
     return {
+      options: [{
+        value: '选项1',
+        label: '提现'
+      }, {
+        value: '选项2',
+        label: '提现手续费'
+      }, {
+        value: '选项3',
+        label: '充值'
+      }, {
+        value: '选项4',
+        label: '优惠券'
+      }, {
+        value: '选项5',
+        label: '充值礼券'
+      }, {
+        value: '选项6',
+        label: '转账'
+      }],
+      img: '',
       //弹出框
       dialog: {
         show: false,
@@ -152,8 +208,9 @@ export default {
       filterTableData: [],
       //搜索
       search_data: {
-        startTime: "",
-        endTime: ""
+        startTime: '',
+        endTime: '',
+        value: ''
       },
       //添加的表单
       form: {
@@ -166,13 +223,7 @@ export default {
         id: ""
       },
       //需要给分页组件传的信息
-      paginations: {
-        page_index: 1, // 当前位于哪页
-        total: 0, // 总数
-        page_size: 5, // 1页显示多少条
-        page_sizes: [5, 10, 15, 20], //每页显示多少条
-        layout: "total, sizes, prev, pager, next, jumper" // 翻页属性
-      },
+      paginations: tool.paginations
     }
   },
   created () {
@@ -183,12 +234,12 @@ export default {
       //获取表格数据 
       this.$axios("/api/profiles").then(res => {
         this.tableData = res.data
-        this.allTableData = res.data
-        this.filterTableData = res.data
+        this.allTableData = res.data// 所有的数据 但是会被改变
+        this.filterTableData = res.data  //存储所有数据，不会被改变
         //设置分页方法
         this.setPaginations()
 
-      });
+      })
     },
     // 列表中编辑，删除的功能
     // 编辑
@@ -198,7 +249,7 @@ export default {
         show: true,
         title: "修改资金信息",
         option: "edit"
-      };
+      }
       this.form = {
         type: row.type,
         describe: row.describe,
@@ -207,7 +258,7 @@ export default {
         cash: row.cash,
         remark: row.remark,
         id: row._id
-      };
+      }
     },
     // 删除
     onDeleteMoney (row, index) {
@@ -219,34 +270,18 @@ export default {
       }).then(() => {
         this.$axios.delete(`/api/profiles/delete/${row._id}`).then(res => {
           console.log(res, index)
-          this.$message("删除成功");
-          this.getProfile();
-        });
+          this.$message("删除成功")
+          this.getProfile()
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
 
     },
 
-    /**
-     * 头部筛选
-     */
-
-    // 筛选
-    onScreeoutMoney () {
-      // 筛选  判断是否选择了初始，结束的时间
-      if (!this.search_data.startTime || !this.search_data.endTime) {
-        this.$message({
-          type: "warning",
-          message: "请选择时间区间"
-        });
-        this.getProfile();
-        return;
-      }
-    },
     // 添加
     onAddMoney () {
       for (let value in this.form) {
@@ -256,12 +291,14 @@ export default {
         show: true,
         title: "添加资金信息",
         option: "add"
-      };
+      }
     },
     /**
      * 分页逻辑
      * 
      * allTableData：把所有的数据放在这里面
+     * elemnet ui 的分页由前端来进行分页
+     * 筛选条件，也是由前端对已有数据进行筛选,使用filter属性
      * 
      */
 
@@ -277,27 +314,64 @@ export default {
         return index < this.paginations.page_size;
       });
     },
-    //改变当前的页码
+    //改变当前的页码 手动输入改变
     handleSizeChange (page_size) {
       // 切换size
-      this.paginations.page_index = tool.pageIndex;
-      this.paginations.page_size = page_size;
+      this.paginations.page_index = 1
+      this.paginations.page_size = page_size
       this.tableData = this.allTableData.filter((item, index) => {
-        return index < page_size;
-      });
+        return index < page_size
+      })
     },
     //设置分页
     setPaginations () {
       // 总页数
-      this.paginations.total = this.allTableData.length;
-      this.paginations.page_index = tool.pageIndex;
-      this.paginations.page_size = tool.pageSize
+      this.paginations.total = this.allTableData.length //获取所有的条数的数量
+      this.paginations.page_index = 1
+      this.paginations.page_size = 5
       // 设置默认分页数据
       this.tableData = this.allTableData.filter((item, index) => {
-        return index < this.paginations.page_size;
-      });
+        return index < this.paginations.page_size
+      })
     },
+    onScreeoutMoney () {
+      // 判断是否选择了日期
 
+      let params = {}
+      for (let key in this.search_data) {
+        if (this.search_data[key]) {
+          params[key] = this.search_data[key]
+        }
+      }
+
+      let dataTablesGet = []
+      // 过滤时间
+      if (params.startTime && params.endTime) {
+        const stime = params.startTime.getTime()
+        const etime = params.endTime.getTime()
+        // 过滤数据 
+        dataTablesGet = this.filterTableData.filter(item => {
+          let date = new Date(item.date)
+          let time = date.getTime()
+          // 所有的数据，要大于开始时间，小于结束时间
+          return time >= stime && time <= etime
+        })
+      } else {
+        dataTablesGet = this.filterTableData
+      }
+
+      if (params.value) {
+        dataTablesGet = dataTablesGet.filter(item => {
+          if (params.value == item.type) {
+            return item
+          }
+        })
+      }
+      this.allTableData = dataTablesGet
+
+      // 分页数据
+      this.setPaginations()
+    }
   }
 }
 </script>
@@ -315,4 +389,10 @@ export default {
 .pagination
   text-align right
   margin-top 10px
+
+.none-data
+  text-align center
+
+.label
+  padding 0 20px
 </style>
